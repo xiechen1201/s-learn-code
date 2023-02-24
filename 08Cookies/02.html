@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>02 Page</title>
+  </head>
+  <body>
+    <script>
+      // 可以拿到 page1 的 cookie
+      console.log(document.cookie);
+      // 可以拿到 page1 的 localStorage
+      console.log(localStorage.getItem("page1Key"));
+      // 无法拿到 page1 的 sessionStorage
+      console.log(sessionStorage.getItem("page1Key"));
+    </script>
+  </body>
+</html>

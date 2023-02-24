@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="preview"></div>
+    <p id="log"></p>
+    <script>
+      document.addEventListener("paste", function (event) {
+        var items = (event.clipboardData || window.clipboardData).items;
+        var file = null;
+
+        console.log("items", items, [...items]);
+
+        if (items && items.length) {
+          // 搜索剪切板items
+          for (var i = 0; i < items.length; i++) {
+            console.log("currentItem", items[i]);
+
+            if (items[i].type.indexOf("image") !== -1) {
+              file = items[i].getAsFile();
+              break;
+            }
+          }
+        } else {
+          log.innerHTML = '<span style="color:red;">当前浏览器不支持</span>';
+          return;
+        }
+        if (!file) {
+          log.innerHTML = '<span style="color:red;">粘贴内容非图片</span>';
+          return;
+        }
+
+        // 此时file就是我们的剪切板中的图片对象
+        // 如果需要预览，可以执行下面代码
+        var reader = new FileReader();
+        reader.onload = function (event) {
+          preview.innerHTML = '<img src="' + event.target.result + '" class="upload-image">';
+        };
+        reader.readAsDataURL(file);
+      });
+    </script>
+  </body>
+</html>

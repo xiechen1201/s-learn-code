@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* class Person {
+        constructor(name, age) {
+          this.name = name;
+          this.age = age;
+        }
+        static eat() {
+          console.log("eat function");
+        }
+        say() {
+          console.log("say function");
+        }
+        drink() {
+          console.log("drink function");
+        }
+      } */
+
+      function _classCallCheck(instance, Constructor) {
+        const result = instance instanceof Constructor;
+        if (!result) {
+          throw new Error("必须进行实例化！");
+        }
+      }
+
+      var _createClass = (function () {
+        function defineProperties(target, props) {
+          for (let index = 0; index < props.length; index++) {
+            const element = props[index];
+
+            Object.defineProperty(target, props[index].key, {
+              value: props[index].value,
+              enumerable: false,
+              writable: true,
+              configurable: true
+            });
+          }
+        }
+
+        return function (Constructor, prototProps, staticProps) {
+          if (prototProps) {
+            defineProperties(Constructor.prototype, prototProps);
+          }
+          if (staticProps) {
+            defineProperties(Constructor, prototProps);
+          }
+
+          return Constructor;
+        };
+      })();
+
+      var Person = (function () {
+        function Person(name, age) {
+          _classCallCheck(this, Person);
+
+          this.name = name;
+          this.age = age;
+        }
+
+        _createClass(
+          Person,
+          [
+            {
+              key: "say",
+              value: function () {
+                console.log("say");
+              }
+            },
+            {
+              key: "eat",
+              value: function () {
+                console.log("eat");
+              }
+            }
+          ],
+          [
+            {
+              key: "drink",
+              value: function () {
+                console.log("drink");
+              }
+            }
+          ]
+        );
+
+        return Person;
+      })();
+
+      let per = new Person("张三", 34);
+      console.log(per);
+      console.log(Object.keys(per.__proto__));
+    </script>
+  </body>
+</html>
