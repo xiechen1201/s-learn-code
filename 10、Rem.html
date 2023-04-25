@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      div {
+        width: 7.5rem;
+        height: 7.5rem;
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <span>测试内容</span>
+    <div></div>
+    <script>
+      document.getElementsByTagName("html")[0].style.fontSize =
+        (document.documentElement.clientWidth / 750) * 100 + "px";
+    </script>
+  </body>
+</html>
