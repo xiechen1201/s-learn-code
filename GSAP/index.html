@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="">
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      div {
+        width: 100%;
+        height: 100vh;
+        text-align: center;
+        line-height: 100vh;
+        font-size: 50px;
+        position: relative;
+      }
+      .screen1 {
+        background-color: gray;
+      }
+      .screen2 {
+        background-color: #ddd;
+      }
+      .screen3 {
+        background-color: darkgreen;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="screen1">screen1</div>
+    <div class="screen2">screen2</div>
+    <div class="screen3">screen3</div>
+    <script src="./libs/minified/gsap.min.js"></script>
+    <script src="./libs//minified/ScrollTrigger.min.js"></script>
+    <script>
+      console.log();
+      ScrollTrigger.create({
+        trigger: ".screen2",
+        start: "top top",
+        end: "+=1000",
+        // markers: true,
+        pin: true
+      });
+    </script>
+  </body>
+</html>

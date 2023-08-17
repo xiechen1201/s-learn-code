@@ -1,0 +1,12 @@
+@import "./var.scss";
+
+.box {
+  width: 100px;
+  height: 100px;
+  background-color: $bgColor;
+
+  .content {
+    font-size: 18px;
+    text-decoration: line-through;
+  }
+}
