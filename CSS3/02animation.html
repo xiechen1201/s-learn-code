@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>animation</title>
+    <style>
+      @keyframes mymove {
+        /* from {
+          left: 0;
+        }
+        to {
+          left: 100%;
+        } */
+
+        from {
+          transform: translate(0) rotate(0);
+        }
+        to {
+          transform: translate(100vw) rotate(360deg);
+        }
+      }
+
+      div {
+        width: 100px;
+        height: 20px;
+        background-color: green;
+        position: absolute;
+        animation: mymove 2s linear infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <div></div>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "12yarn",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "ls": "ls -l"
+  },
+  "dependencies": {
+    "jquery": "^3.7.0",
+    "lodash": "^4.17.21",
+    "mockjs": "^1.1.0"
+  },
+  "devDependencies": {
+    "mocha": "^10.2.0"
+  }
+}
