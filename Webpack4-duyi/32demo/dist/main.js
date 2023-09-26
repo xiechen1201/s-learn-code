@@ -86,6 +86,20 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/assets/index.css":
+/*!******************************!*\
+  !*** ./src/assets/index.css ***!
+  \******************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./src/index.js":
 /*!**********************!*\
   !*** ./src/index.js ***!
@@ -95,24 +109,11 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _style_index_less__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./style/index.less */ "./src/style/index.less");
-
-console.log(_style_index_less__WEBPACK_IMPORTED_MODULE_0__["default"]);
+/* harmony import */ var _assets_index_css__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./assets/index.css */ "./src/assets/index.css");
 
 
-/***/ }),
+console.log(_assets_index_css__WEBPACK_IMPORTED_MODULE_0__["default"]);
 
-/***/ "./src/style/index.less":
-/*!******************************!*\
-  !*** ./src/style/index.less ***!
-  \******************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-/* harmony default export */ __webpack_exports__["default"] = ({"bordered":"Lsyn3T9+IeAHn4Vq0up0zA==","a":"_4cPFnr8vIYxVEZ2vPkPvKQ==","b":"Bh51cil4zmVQeoYrVmUXYw==","c":"pKPVX59+KIi9a0O+IHrc5g=="});
 
 /***/ })
 
