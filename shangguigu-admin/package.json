@@ -5,19 +5,19 @@
   "type": "module",
   "homepage": "https://huccct.github.io/vue-admin",
   "scripts": {
+    "preinstall": "node ./scripts/preinstall.js",
+    "prepare": "husky install",
     "dev": "vite",
     "build": "vue-tsc && vite build",
+    "build:test": "vue-tsc && vite build --mode test",
+    "build:pro": "vue-tsc && vite build --mode production",
     "preview": "vite preview",
     "lint": "eslint src",
     "fix": "eslint src --fix",
     "format": "prettier --write \"./**/*.{html,vue,ts,js,json,md}\"",
     "lint:eslint": "eslint src/**/*.{ts,vue} --cache --fix",
     "lint:style": "stylelint src/**/*.{css,scss,vue} --cache --fix",
-    "prepare": "husky install",
     "commitlint": "commitlint --config commitlint.config.cjs -e -V",
-    "preinstall": "node ./scripts/preinstall.js",
-    "build:test": "vue-tsc && vite build --mode test",
-    "build:pro": "vue-tsc && vite build --mode production",
     "commit": "git add . && git-cz"
   },
   "config": {
@@ -26,11 +26,11 @@
     }
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.1.0",
+    "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.4.0",
     "echarts": "^5.4.2",
     "echarts-liquidfill": "^3.1.0",
-    "element-plus": "^2.3.4",
+    "element-plus": "^2.5.2",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "pinia": "^2.1.3",
