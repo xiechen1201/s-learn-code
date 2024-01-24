@@ -3,7 +3,8 @@ export type TLoginParams = { username: string; password: string };
 export type TLoginResponse = {
   code: number;
   data: {
-    token: string;
+    message?: string;
+    token?: string;
   };
 };
 

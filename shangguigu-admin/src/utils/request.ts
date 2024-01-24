@@ -12,7 +12,7 @@ request.interceptors.request.use((config) => {
 
 request.interceptors.response.use(
   (response) => {
-    return response.data.data;
+    return response.data;
   },
   (error) => {
     let message = '';
