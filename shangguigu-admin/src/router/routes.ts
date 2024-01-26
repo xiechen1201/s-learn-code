@@ -26,7 +26,7 @@ const constantRoute = [
         name: 'Home',
         component: () => import('../views/home/index.vue'),
         meta: {
-          title: '主页1',
+          title: '主页',
           icon: 'Service',
         },
       },
@@ -44,6 +44,7 @@ const constantRoute = [
   {
     path: '/acl',
     name: 'Acl',
+    redirect: '/acl/user',
     component: Layout,
     meta: {
       title: '权限管理',
@@ -82,6 +83,7 @@ const constantRoute = [
   {
     path: '/product',
     name: 'Product',
+    redirect: '/product/trademark',
     component: Layout,
     meta: {
       title: '商品管理',

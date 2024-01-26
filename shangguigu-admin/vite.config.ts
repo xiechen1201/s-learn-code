@@ -9,6 +9,13 @@ export default defineConfig(({ command }) => {
   return {
     server: {
       open: true,
+      proxy: {
+        '/api': {
+          target: 'http://sph-api.atguigu.cn/',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        },
+      },
     },
     resolve: {
       alias: {
@@ -23,7 +30,6 @@ export default defineConfig(({ command }) => {
         },
       },
     },
-
     plugins: [
       vue(),
       createSvgIconsPlugin({

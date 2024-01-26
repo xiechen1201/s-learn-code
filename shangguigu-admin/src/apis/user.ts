@@ -1,19 +1,31 @@
 import { request } from '@/utils';
-import { TLoginParams, TLoginResponse, TGetUserInfoResponse } from './type';
+import {
+  ILoginParams,
+  ILoginResponse,
+  IUserInfoResponse,
+  IResponseCommon,
+} from './type';
 
-function login(data: TLoginParams) {
-  return request<any, TLoginResponse>({
-    url: '/user/login',
+function login(data: ILoginParams) {
+  return request<any, ILoginResponse>({
+    url: '/admin/acl/index/login',
     method: 'post',
     data,
   });
 }
 
 function getUserInfo() {
-  return request<any, TGetUserInfoResponse>({
-    url: '/user/info',
+  return request<any, IUserInfoResponse>({
+    url: '/admin/acl/index/info',
+    method: 'get',
+  });
+}
+
+function logout() {
+  return request<any, IResponseCommon>({
+    url: '/admin/acl/index/logout',
     method: 'post',
   });
 }
 
-export { login, getUserInfo };
+export { login, getUserInfo, logout };

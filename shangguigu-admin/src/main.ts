@@ -9,6 +9,7 @@ import 'virtual:svg-icons-register';
 import globalComponent from './components';
 import '@/styles/index.scss';
 import App from '@/App.vue';
+import './permisstion';
 
 const app = createApp(App);
 

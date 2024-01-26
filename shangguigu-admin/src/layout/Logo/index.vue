@@ -7,6 +7,10 @@
 
 <script setup lang="ts">
 import setting from '@/setting';
+
+defineOptions({
+  name: 'Logo',
+});
 </script>
 
 <style lang="scss" scoped>
@@ -15,6 +19,7 @@ import setting from '@/setting';
   display: flex;
   align-items: center;
   padding: 20px;
+  overflow: hidden;
 
   img {
     width: $base-menu-logo-width;
@@ -25,6 +30,7 @@ import setting from '@/setting';
     margin-left: 10px;
     color: #fff;
     font-size: $base-menu-logo-fontSize;
+    text-wrap: nowrap;
   }
 }
 </style>

@@ -13,18 +13,18 @@
           <h2>欢迎来到硅谷甄选</h2>
           <el-form-item prop="username">
             <el-input
+              v-model="loginForm.username"
               type="text"
               placeholder="请输入账号"
               :prefix-icon="User"
-              v-model="loginForm.username"
             ></el-input>
           </el-form-item>
           <el-form-item prop="password">
             <el-input
+              v-model="loginForm.password"
               type="password"
               placeholder="请输入密码"
               :prefix-icon="Lock"
-              v-model="loginForm.password"
               show-password
             ></el-input>
           </el-form-item>
@@ -48,18 +48,19 @@
 <script setup lang="ts">
 import { User, Lock } from '@element-plus/icons-vue';
 import { reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { ElNotification } from 'element-plus';
 import type { FormInstance } from 'element-plus';
 import useUserStore from '@/store/modules/user';
 
 const userStore = useUserStore();
 const router = useRouter();
+const route = useRoute();
 
 const formRef = ref<FormInstance>();
 const loginForm = reactive({
   username: 'admin',
-  password: '111111',
+  password: 'atguigu123',
 });
 const rules = reactive({
   username: [
@@ -93,7 +94,11 @@ const handleLogin = () => {
   userStore
     .userLogin(loginForm)
     .then(() => {
-      router.push('/');
+      if (route.query.redirect) {
+        router.replace(route.query.redirect as string);
+      } else {
+        router.replace('/');
+      }
 
       ElNotification({
         type: 'success',

@@ -1,24 +1,27 @@
-export type TLoginParams = { username: string; password: string };
+// 登录接口传参
+export interface ILoginParams {
+  username: string;
+  password: string;
+}
 
-export type TLoginResponse = {
+export interface IResponseCommon {
   code: number;
-  data: {
-    message?: string;
-    token?: string;
-  };
-};
+  message: string;
+  ok: boolean;
+}
 
-export type TGetUserInfoResponse = {
-  code: number;
+// 登录接口返参
+export interface ILoginResponse extends IResponseCommon {
+  data: string;
+}
+
+// 获取用户信息返参
+export interface IUserInfoResponse extends IResponseCommon {
   data: {
-    userId: number;
-    avatar: string;
-    username: string;
-    password: string;
-    desc: string;
-    roles: string[];
-    buttons: string[];
     routes: string[];
-    token: string;
+    buttons: string[];
+    roles: string[];
+    name: string;
+    avatar: string;
   };
-};
+}

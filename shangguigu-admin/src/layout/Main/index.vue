@@ -1,20 +1,34 @@
-import { Transition } from 'vue';
 <template>
   <RouterView #default="{ Component }">
     <Transition name="fade" mode="out-in">
-      <Component :is="Component" />
+      <Component :key="key" :is="Component" />
     </Transition>
   </RouterView>
 </template>
 
 <script setup>
-import {} from 'vue';
+import { ref, watch } from 'vue';
+import useSettingStore from '@/store/modules/setting';
+
+defineOptions({
+  name: 'MainContent',
+});
+
+const settingStore = useSettingStore();
+let key = ref(0);
+
+watch(
+  () => settingStore.refsh,
+  () => {
+    key.value++;
+  },
+);
 </script>
 
 <style lang="scss" scoped>
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s ease;
+  transition: opacity 0.2s ease;
 }
 
 .fade-enter-from,
