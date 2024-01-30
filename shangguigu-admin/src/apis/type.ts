@@ -25,3 +25,17 @@ export interface IUserInfoResponse extends IResponseCommon {
     avatar: string;
   };
 }
+
+// 获取品牌列表类型
+export interface IRecords {
+  id: number;
+  tmName: string;
+  logoUrl: string;
+}
+
+export interface IGetHasTardemarkResponse extends IResponseCommon {
+  data: {
+    records: IRecords[];
+    total: number;
+  };
+}

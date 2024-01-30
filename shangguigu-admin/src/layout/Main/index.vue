@@ -6,7 +6,7 @@
   </RouterView>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue';
 import useSettingStore from '@/store/modules/setting';
 
