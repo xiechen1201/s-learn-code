@@ -47,6 +47,7 @@ onMounted(() => {
             global: false, // 缺省为 false
           },
         },
+        smooth: true,
       },
     ],
     grid: {

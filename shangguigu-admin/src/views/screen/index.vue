@@ -14,7 +14,11 @@
           <Map />
           <Line />
         </div>
-        <div class="right">右</div>
+        <div class="right">
+          <Rank />
+          <Year />
+          <Couter />
+        </div>
       </main>
     </div>
   </div>
@@ -28,6 +32,9 @@ import Sex from './coms/Sex.vue';
 import Age from './coms/Age.vue';
 import Map from './coms/Map.vue';
 import Line from './coms/Line.vue';
+import Rank from './coms/Rank.vue';
+import Year from './coms/Year.vue';
+import Couter from './coms/Couter.vue';
 
 let screenRef = ref<HTMLElement | null>(null);
 
@@ -70,10 +77,6 @@ window.onresize = () => {
     .main {
       display: flex;
 
-      .right {
-        flex: 1;
-      }
-
       .left {
         flex: 1;
         display: flex;
@@ -85,6 +88,13 @@ window.onresize = () => {
         flex: 2;
         display: flex;
         flex-direction: column;
+      }
+
+      .right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: calc(1080px - 40px);
       }
     }
   }

@@ -11,7 +11,7 @@ let mapRef = ref<HTMLElement | null>(null);
 
 echarts.registerMap('china', china as any);
 
-function createSeriesItem(arr) {
+function createSeriesItem(arr: any[]) {
   let res = {
     type: 'lines',
     data: [

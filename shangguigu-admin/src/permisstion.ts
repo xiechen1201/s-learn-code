@@ -5,7 +5,10 @@ import pinia from './store';
 import useUserStore from '@/store/modules/user';
 
 router.beforeEach(async (to, from, next) => {
-  nprogress.start();
+  // nprogress.start();
+
+  next();
+  return;
 
   const userStore = useUserStore(pinia);
 
