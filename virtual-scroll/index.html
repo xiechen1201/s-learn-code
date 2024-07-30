@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .view-container {
+        /* height: 400px; */
+        width: 200px;
+        border: 1px solid red;
+        overflow-y: scroll;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .content-container {
+        /* height: 1000px; */
+      }
+
+      .item-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        border: 1px solid blue;
+      }
+
+      .item {
+        height: 20px;
+      }
+    </style>
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 虚拟滚动，详见：https://juejin.cn/post/7301911743487590452?searchId=20240730171414569DE4AB410D05633A42 -->
+    <div id="app"></div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="./index.js"></script>
+  </body>
+</html>
