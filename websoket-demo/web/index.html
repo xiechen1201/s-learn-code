@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>WebSocket Client</title>
+    </head>
+    <body>
+        <h1>WebSocket Client</h1>
+        <button id="sendMessage">Send Message</button>
+        <div id="response"></div>
+
+        <script>
+            // 连接到 WebSocket 服务器
+            const socket = new WebSocket("ws://localhost:3000");
+
+            // 监听 WebSocket 连接打开事件
+            socket.onopen = () => {
+                console.log("WebSocket is connected");
+            };
+
+            // 监听从服务器接收到的消息
+            socket.onmessage = (event) => {
+                document.getElementById("response").textContent =
+                    "Server says: " + event.data;
+            };
+
+            // 发送消息到服务器
+            document
+                .getElementById("sendMessage")
+                .addEventListener("click", () => {
+                    socket.send("Hello from client!");
+                });
+        </script>
+    </body>
+</html>

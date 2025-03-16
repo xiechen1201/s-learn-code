@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <style>
+            .drop-zone {
+                width: 400px;
+                height: 200px;
+                border: 2px dashed #ccc;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                margin: 20px auto;
+                transition: all 0.3s;
+            }
+
+            .drop-zone.dragover {
+                border-color: #2196f3;
+                background-color: #f0f8ff;
+            }
+
+            .preview img {
+                max-width: 200px;
+                max-height: 200px;
+                margin: 10px;
+            }
+        </style>
+        <title>Document</title>
+    </head>
+    <body>
+        <div  class="drop-zone">
+            <p>将文件拖拽到此处或点击上传</p>
+            <input type="file" id="file-input" hidden />
+        </div>
+        <div class="preview"></div>
+        <script type="module" src="./src/main.js"></script>
+    </body>
+</html>

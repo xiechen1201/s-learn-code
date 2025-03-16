@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <canvas id="fireworkCanvas"></canvas>
+        <script>
+            const canvas = document.getElementById("fireworkCanvas");
+            const ctx = canvas.getContext("2d");
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            // 粒子类
+            class Particle {
+                constructor(x, y, angle, speed, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.angle = angle;
+                    this.speed = speed;
+                    this.color = color;
+                    this.radius = Math.random() * 3 + 1;
+                    this.alpha = 1; // 初始透明度
+                    this.life = 100; // 生命周期，决定粒子持续时间
+                }
+
+                // 更新粒子状态
+                update() {
+                    // 基本物理模拟
+                    this.x += Math.cos(this.angle) * this.speed;
+                    this.y += Math.sin(this.angle) * this.speed;
+                    this.speed *= 0.98; // 模拟摩擦力，逐渐减速
+                    this.alpha -= 0.01; // 透明度逐渐减小
+                    this.life--;
+
+                    // 消失条件
+                    if (this.life <= 0 || this.alpha <= 0) {
+                        return false; // 粒子消失
+                    }
+                    return true;
+                }
+
+                // 绘制粒子
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.alpha})`;
+                    ctx.fill();
+                    ctx.closePath();
+                }
+            }
+
+            // 烟花类
+            class Firework {
+                constructor(x, y, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.color = color;
+                    this.particles = [];
+
+                    // 生成粒子
+                    for (let i = 0; i < 200; i++) {
+                        const angle = Math.random() * Math.PI * 2; // 随机角度
+                        const speed = Math.random() * 5 + 2; // 随机速度
+                        this.particles.push(
+                            new Particle(
+                                this.x,
+                                this.y,
+                                angle,
+                                speed,
+                                this.color
+                            )
+                        );
+                    }
+                }
+
+                // 更新并绘制烟花
+                update() {
+                    this.particles = this.particles.filter((p) => p.update()); // 过滤掉已消失的粒子
+                    this.particles.forEach((p) => p.draw());
+                }
+            }
+
+            // 创建烟花效果
+            let fireworks = [];
+
+            // 鼠标点击时产生烟花爆炸
+            canvas.addEventListener("click", (e) => {
+                const color = {
+                    r: Math.random() * 255,
+                    g: Math.random() * 255,
+                    b: Math.random() * 255
+                };
+                fireworks.push(new Firework(e.clientX, e.clientY, color));
+            });
+
+            // 动画循环
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height); // 清除上一帧
+                fireworks.forEach((firework) => firework.update());
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        </script>
+    </body>
+</html>
