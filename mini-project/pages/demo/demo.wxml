@@ -1,0 +1,24 @@
+<view> Hello {{name}}! </view>
+<button bindtap="changeName"> Click me! </button>
+
+<view wx:for="{{ list }}">{{ item }}-{{ index }}</view>
+<view wx:if="{{  list.length >= 5 }}">5 个元素</view>
+<view wx:else>不够 5 个</view>
+
+<template name="baseUserInfo">
+  <view>姓名：{{ userName }}</view>
+  <view>年龄：{{ age }}</view>
+  <view>职业：{{ job }}</view>
+</template>
+
+<template is="baseUserInfo" data="{{ ...baseUserInfo }}"></template>
+
+<input class="input" model:value="{{name}}"/>
+
+<button bind:tap="handleGetNodeInfo">获取节点信息</button>
+
+<BaseComponent inner-text="自定义文字">
+  <view>父组件内容插槽</view>
+  <view slot="content">父组件内容插槽2</view>
+  <view slot="footer">父组件内容插槽3</view>
+</BaseComponent>
