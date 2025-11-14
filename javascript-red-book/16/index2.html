@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>16.4 范围</title>
+  </head>
+  <body>
+    <p id="p1"><b>Hello</b> world!</p>
+    <script>
+      let range = document.createRange();
+      let oP1 = document.getElementById("p1")
+      console.log(range.selectNode(oP1));
+    </script>
+  </body>
+</html>

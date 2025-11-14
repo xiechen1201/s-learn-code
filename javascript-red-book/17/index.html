@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #div1 {
+        width: 200px;
+        height: 200px;
+        background-color: #ffc;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <input type="button" value="点击我" onclick="console.log(this)"> -->
+
+    <!-- <form method="post">
+      <input type="text" name="username" value="" />
+      <input
+        type="button"
+        value="Echo Username"
+        onclick="console.log(this.form.username.value)" />
+    </form> -->
+
+    <button id="btn">点击我</button>
+
+    <script>
+      let btn = document.getElementById("btn");
+      btn.addEventListener(
+        "click",
+        function (event) {
+          console.log(this);
+          console.log(event.shiftKey);
+          event.stopPropagation();
+        },
+        true
+      );
+
+      document.addEventListener(
+        "click",
+        (event) => {
+          console.log(event.eventPhase);
+          console.log("document click");
+        },
+        true
+      );
+
+      document.addEventListener("mousewheel", (event) => {
+        console.log(event.wheelDelta);
+      })
+    </script>
+  </body>
+</html>

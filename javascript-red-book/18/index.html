@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form action="">
+      <textarea id="content" name="content" rows="10" cols="30"></textarea>
+    </form>
+    <script>
+      let content = document.getElementById("content");
+      content.addEventListener("select", (event) => {
+        console.log(event.target.selectionStart, event.target.selectionEnd);
+        console.log(
+          event.target.value.substring(
+            event.target.selectionStart,
+            event.target.selectionEnd
+          )
+        );
+      });
+
+      content.addEventListener("beforepaste", function (event) {
+       event.clipboardData.setData("text/plain", "这是被修改的数据～")
+      });
+
+      content.addEventListener("paste", function (event) {
+        console.log("paste");
+        console.log(event.clipboardData.getData("text/plain"));
+      });
+    </script>
+  </body>
+</html>
