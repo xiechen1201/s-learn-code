@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
+      id="box"
+      style="
+        width: 100px;
+        height: 100px;
+        background-color: red;
+        transform: scale(2);
+      "></div>
+    <script>
+      let oBox = document.getElementById("box");
+      console.log('style==>',oBox.style.width);
+      console.log('getComputedStyle==>',window.getComputedStyle(oBox).width);
+      console.log('clientWidth==>',oBox.clientWidth);
+      console.log('offsetWidth==>',oBox.offsetWidth);
+      console.log('getBoundingClientRect==>',oBox.getBoundingClientRect().width);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .box {
+        border: 1px solid #333;
+        height: 500px;
+      }
+      .active {
+        border-color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="btn">滚动</button>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box active"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <script>
+      let oBtn = document.querySelector(".btn");
+      let oBox = document.querySelector(".active");
+
+      oBtn.addEventListener("click", function () {
+        oBox.scrollIntoView({
+          behavior: "smooth",
+        })
+      });
+    </script>
+  </body>
+</html>

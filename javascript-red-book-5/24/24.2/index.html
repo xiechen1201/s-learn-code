@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const worker = new Worker("./worker.js");
+      const sharedArrayBuffer = new SharedArrayBuffer(1);
+      const view = new Uint8Array(sharedArrayBuffer);
+      view[0] = 1;
+
+      worker.onmessage = () => {
+        console.log(`buffer value after worker modification: ${view[0]}`);
+      };
+      worker.postMessage(sharedArrayBuffer);
+    </script>
+  </body>
+</html>

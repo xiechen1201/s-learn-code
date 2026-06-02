@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>3D 火箭发射演示</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; background: #000; font-family: system-ui, -apple-system, BlinkMacSystemFont; }
+    #info {
+      position: fixed;
+      left: 16px;
+      top: 16px;
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+      font-size: 14px;
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+      z-index: 10;
+    }
+    #info h1 {
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+    #info span.stage {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<div id="info">
+  <h1>火箭发射阶段演示</h1>
+  <div>当前阶段：<span id="stageText" class="stage">准备发射</span></div>
+  <div>操作：拖动旋转视角，滚轮缩放</div>
+</div>
+<canvas id="canvas"></canvas>
+
+<script type="module">
+  import * as THREE from "three";
+  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+
+  const canvas = document.getElementById("canvas");
+
+  // 场景、相机、渲染器
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x000015);
+
+  const camera = new THREE.PerspectiveCamera(
+    60,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+  );
+  camera.position.set(15, 10, 20);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  // 光照
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+  dirLight.position.set(10, 20, 10);
+  dirLight.castShadow = true;
+  scene.add(dirLight);
+
+  const ambLight = new THREE.AmbientLight(0x404040, 0.7);
+  scene.add(ambLight);
+
+  // 地面
+  const groundGeo = new THREE.PlaneGeometry(200, 200);
+  const groundMat = new THREE.MeshPhongMaterial({ color: 0x202020 });
+  const ground = new THREE.Mesh(groundGeo, groundMat);
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+
+  // 发射台
+  const padGeo = new THREE.CylinderGeometry(3, 3, 0.5, 32);
+  const padMat = new THREE.MeshPhongMaterial({ color: 0x444444 });
+  const pad = new THREE.Mesh(padGeo, padMat);
+  pad.position.y = 0.25;
+  pad.receiveShadow = true;
+  scene.add(pad);
+
+  // ==== 创建火箭 ====
+  const rocketGroup = new THREE.Group();
+  scene.add(rocketGroup);
+
+  // 尺寸控制（简单按比例，不是真实尺寸）
+  const bodyRadius = 0.6;
+  const firstStageHeight = 7;
+  const secondStageHeight = 4;
+  const fairingHeight = 3;
+
+  // 一级
+  const firstStageGeo = new THREE.CylinderGeometry(
+    bodyRadius,
+    bodyRadius,
+    firstStageHeight,
+    32
+  );
+  const firstStageMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+  const firstStage = new THREE.Mesh(firstStageGeo, firstStageMat);
+  firstStage.castShadow = true;
+  firstStage.position.y = firstStageHeight / 2;
+  rocketGroup.add(firstStage);
+
+  // 一级黑色装饰环
+  const bandGeo = new THREE.CylinderGeometry(
+    bodyRadius * 1.01,
+    bodyRadius * 1.01,
+    0.4,
+    32
+  );
+  const bandMat = new THREE.MeshPhongMaterial({ color: 0x222222 });
+  const band = new THREE.Mesh(bandGeo, bandMat);
+  band.position.y = firstStageHeight - 0.5;
+  rocketGroup.add(band);
+
+  // 二级
+  const secondStageGeo = new THREE.CylinderGeometry(
+    bodyRadius * 0.9,
+    bodyRadius * 0.9,
+    secondStageHeight,
+    32
+  );
+  const secondStageMat = new THREE.MeshPhongMaterial({ color: 0xf5f5f5 });
+  const secondStage = new THREE.Mesh(secondStageGeo, secondStageMat);
+  secondStage.castShadow = true;
+  secondStage.position.y = firstStageHeight + secondStageHeight / 2;
+  rocketGroup.add(secondStage);
+
+  // 整流罩（简单的圆锥）
+  const fairingGeo = new THREE.ConeGeometry(bodyRadius * 0.9, fairingHeight, 32);
+  const fairingMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+  const fairing = new THREE.Mesh(fairingGeo, fairingMat);
+  fairing.castShadow = true;
+  fairing.position.y =
+    firstStageHeight + secondStageHeight + fairingHeight / 2;
+  rocketGroup.add(fairing);
+
+  // 一级发动机火焰
+  const flameGeo = new THREE.ConeGeometry(0.6, 1.8, 16);
+  const flameMat = new THREE.MeshBasicMaterial({
+    color: 0xffaa33,
+    transparent: true,
+    opacity: 0.9
+  });
+  const flame = new THREE.Mesh(flameGeo, flameMat);
+  flame.rotation.x = Math.PI;
+  flame.position.y = 0.1; // 一级底部稍下
+  rocketGroup.add(flame);
+
+  // 二级发动机火焰
+  const flame2 = new THREE.Mesh(
+    new THREE.ConeGeometry(0.4, 1.2, 16),
+    new THREE.MeshBasicMaterial({
+      color: 0xffdd77,
+      transparent: true,
+      opacity: 0
+    })
+  );
+  flame2.rotation.x = Math.PI;
+  flame2.position.y = firstStageHeight + 0.1;
+  rocketGroup.add(flame2);
+
+  // 初始位置：火箭在发射台上
+  rocketGroup.position.set(0, 0.25, 0);
+
+  // 轨道：用一条弯曲的虚线表示目标轨道
+  const curvePoints = [];
+  const orbitRadius = 60;
+  for (let i = 0; i <= 50; i++) {
+    const t = i / 50;
+    const angle = t * Math.PI * 1.1;
+    const x = Math.cos(angle) * orbitRadius;
+    const z = Math.sin(angle) * orbitRadius;
+    const y = 20 + t * 30;
+    curvePoints.push(new THREE.Vector3(x, y, z));
+  }
+  const orbitCurve = new THREE.CatmullRomCurve3(curvePoints);
+  const orbitGeo = new THREE.BufferGeometry().setFromPoints(
+    orbitCurve.getPoints(200)
+  );
+  const orbitMat = new THREE.LineDashedMaterial({
+    color: 0x88ccff,
+    dashSize: 2,
+    gapSize: 1,
+  });
+  const orbitLine = new THREE.Line(orbitGeo, orbitMat);
+  orbitLine.computeLineDistances();
+  scene.add(orbitLine);
+
+  // 阶段控制
+  const stageText = document.getElementById("stageText");
+
+  const STAGES = {
+    PREPARE: 0,
+    LIFTOFF: 1,
+    ASCENT: 2,
+    STAGE_SEPARATION: 3,
+    FAIRING_SEPARATION: 4,
+    ORBIT_INSERTION: 5,
+    CRUISE_ORBIT: 6
+  };
+
+  let currentStage = STAGES.PREPARE;
+  let launchTime = 0;
+  let clock = new THREE.Clock();
+
+  // 用来分离后的残骸和一级
+  const firstStageDetached = firstStage.clone();
+  const bandDetached = band.clone();
+  const debrisGroup = new THREE.Group(); // 整流罩半片之类
+  scene.add(debrisGroup);
+
+  let stageSepDone = false;
+  let fairingSepDone = false;
+  let orbitInserted = false;
+
+  function setStage(stage) {
+    currentStage = stage;
+    switch (stage) {
+      case STAGES.PREPARE:
+        stageText.textContent = "准备发射";
+        break;
+      case STAGES.LIFTOFF:
+        stageText.textContent = "起飞 / 点火";
+        break;
+      case STAGES.ASCENT:
+        stageText.textContent = "上升穿越大气层";
+        break;
+      case STAGES.STAGE_SEPARATION:
+        stageText.textContent = "一级分离";
+        break;
+      case STAGES.FAIRING_SEPARATION:
+        stageText.textContent = "整流罩分离";
+        break;
+      case STAGES.ORBIT_INSERTION:
+        stageText.textContent = "二级入轨点火";
+        break;
+      case STAGES.CRUISE_ORBIT:
+        stageText.textContent = "进入预定轨道";
+        break;
+    }
+  }
+
+  setStage(STAGES.PREPARE);
+  launchTime = clock.getElapsedTime() + 1.5; // 1.5 秒后自动发射
+
+  function animate() {
+    requestAnimationFrame(animate);
+    const t = clock.getElapsedTime();
+
+    // 阶段时间轴（可根据需要微调）
+    const liftoffStart = launchTime;             // 起飞
+    const ascentStart = liftoffStart + 3;        // 持续上升
+    const stageSepStart = ascentStart + 5;       // 一级分离
+    const fairingSepStart = stageSepStart + 3;   // 整流罩分离
+    const orbitBurnStart = fairingSepStart + 3;  // 二级入轨
+    const cruiseStart = orbitBurnStart + 5;      // 稳定轨道
+
+    // ==== 阶段控制 ====
+    if (t < liftoffStart) {
+      setStage(STAGES.PREPARE);
+      flame.material.opacity = 0;
+    } else if (t < ascentStart) {
+      if (currentStage !== STAGES.LIFTOFF) setStage(STAGES.LIFTOFF);
+      flame.material.opacity = 0.9;
+      flame2.material.opacity = 0;
+
+      const dt = t - liftoffStart;
+      rocketGroup.position.y = 0.25 + dt * 1.8; // 起飞阶段高度增加
+    } else if (t < stageSepStart) {
+      if (currentStage !== STAGES.ASCENT) setStage(STAGES.ASCENT);
+      const dt = t - ascentStart;
+      rocketGroup.position.y = 0.25 + (ascentStart - liftoffStart) * 1.8 + dt * 2.5;
+    } else if (t < fairingSepStart) {
+      if (currentStage !== STAGES.STAGE_SEPARATION) setStage(STAGES.STAGE_SEPARATION);
+
+      if (!stageSepDone) {
+        // 把一级单独复制出来放到场景中，火箭本体只保留二级 + 整流罩
+        stageSepDone = true;
+        rocketGroup.remove(firstStage);
+        rocketGroup.remove(band);
+
+        firstStageDetached.position.copy(rocketGroup.position);
+        bandDetached.position.copy(rocketGroup.position);
+        scene.add(firstStageDetached);
+        scene.add(bandDetached);
+
+        // 一级火焰熄灭，二级火焰点亮
+        flame.material.opacity = 0;
+        flame2.material.opacity = 0.9;
+      }
+
+      const dt = t - stageSepStart;
+
+      // 二级继续上升
+      rocketGroup.position.y += 2.2 * clock.getDelta() * 60 / 60;
+
+      // 一级缓慢下落 + 旋转
+      firstStageDetached.position.y -= dt * 0.4;
+      firstStageDetached.rotation.x += 0.01;
+      bandDetached.position.copy(firstStageDetached.position);
+      bandDetached.rotation.copy(firstStageDetached.rotation);
+    } else if (t < orbitBurnStart) {
+      if (currentStage !== STAGES.FAIRING_SEPARATION) setStage(STAGES.FAIRING_SEPARATION);
+
+      if (!fairingSepDone) {
+        fairingSepDone = true;
+        rocketGroup.remove(fairing);
+
+        // 创建两个分离的整流罩半片
+        const half1 = fairing.clone();
+        const half2 = fairing.clone();
+        half1.scale.set(0.5, 1, 1);
+        half2.scale.set(0.5, 1, 1);
+
+        half1.position.copy(rocketGroup.position).add(new THREE.Vector3(0.8, 0, 0));
+        half2.position.copy(rocketGroup.position).add(new THREE.Vector3(-0.8, 0, 0));
+
+        debrisGroup.add(half1);
+        debrisGroup.add(half2);
+      }
+
+      rocketGroup.position.y += 2.0 * clock.getDelta() * 60 / 60;
+
+      // 整流罩半片侧向飞离
+      debrisGroup.children.forEach((m, idx) => {
+        const dir = idx === 0 ? 1 : -1;
+        m.position.x += dir * 0.1;
+        m.position.y -= 0.02;
+        m.rotation.z += dir * 0.05;
+      });
+    } else if (t < cruiseStart) {
+      if (currentStage !== STAGES.ORBIT_INSERTION) setStage(STAGES.ORBIT_INSERTION);
+
+      // 二级沿着预定轨道的前半段飞行（使用曲线插值）
+      const tt = THREE.MathUtils.clamp(
+        (t - orbitBurnStart) / (cruiseStart - orbitBurnStart),
+        0,
+        1
+      );
+      const point = orbitCurve.getPointAt(tt * 0.6);
+      const tangent = orbitCurve.getTangentAt(tt * 0.6);
+      rocketGroup.position.copy(point);
+
+      // 让火箭沿切线方向稍微倾斜
+      const axis = new THREE.Vector3(0, 1, 0);
+      rocketGroup.quaternion.setFromUnitVectors(axis, tangent.clone().normalize());
+
+      flame2.material.opacity = 0.9;
+    } else {
+      if (currentStage !== STAGES.CRUISE_ORBIT) setStage(STAGES.CRUISE_ORBIT);
+      if (!orbitInserted) {
+        orbitInserted = true;
+        flame2.material.opacity = 0; // 到轨道后熄火
+      }
+
+      // 在轨道上循环飞行
+      const tt = ((t - cruiseStart) * 0.05) % 1;
+      const point = orbitCurve.getPointAt(tt);
+      const tangent = orbitCurve.getTangentAt(tt);
+      rocketGroup.position.copy(point);
+      const axis = new THREE.Vector3(0, 1, 0);
+      rocketGroup.quaternion.setFromUnitVectors(axis, tangent.clone().normalize());
+    }
+
+    // 小小的火焰抖动效果
+    const flameScale = 1 + Math.sin(t * 40) * 0.15;
+    flame.scale.set(flameScale, flameScale, flameScale);
+    flame2.scale.set(flameScale, flameScale, flameScale);
+
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  animate();
+
+  // 自适应窗口尺寸
+  window.addEventListener("resize", () => {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  });
+</script>
+</body>
+</html>

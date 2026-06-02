@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      async function* ints() {
+        for (let i = 0; i < 5; i++) {
+          yield await new Promise((resolve) =>
+            setTimeout(() => resolve(i), 1000)
+          );
+        }
+      }
+
+      const writableStream = new WritableStream({
+        write(value) {
+          console.log(value);
+        }
+      });
+
+      console.log(writableStream.locked);
+      const writableStreamDefaultWriter = writableStream.getWriter();
+      console.log(writableStream.locked);
+
+      (async function(){
+        for await (const chunk of ints()) {
+          await writableStreamDefaultWriter.ready;
+          writableStreamDefaultWriter.write(chunk);
+        }
+        writableStreamDefaultWriter.close();
+      })()
+    </script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .box{
+        height: 500px;
+        border: 1px solid #666;
+      }
+      .target{
+        border-color: red;
+      }
+      .btn{
+        position: fixed;
+        right: 50px;
+        bottom: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <div class="box target"></div>
+    <div class="box"></div>
+    <div class="box"></div>
+    <button class="btn" onclick="handleClickBtn()">获取偏移量</button>
+
+    <script>
+      function handleClickBtn(){
+        const target = document.querySelector('.target');
+        console.log(target.getBoundingClientRect());
+
+        if(document.documentElement.clientHeight > target.getBoundingClientRect().top ){
+          console.log('目标元素出现在视口中')
+        }else{
+          console.log('没有出现目标元素')
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JS 瀑布流</title>
+    <style>
+      body {
+        margin: 0;
+        background: #f5f5f5;
+        font-family: sans-serif;
+      }
+      #masonry-container {
+        position: relative;
+        margin: 0 auto;
+        padding: 10px 0;
+        /* 容器由 JS 动态设置高度 */
+      }
+      .masonry-card {
+        position: absolute;
+        box-sizing: border-box;
+        width: 220px; /* 固定宽，与 JS 保持一致 */
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        opacity: 0; /* 初始隐藏，布局完成后显示 */
+        transition:
+          opacity 0.3s,
+          top 0.3s,
+          left 0.3s;
+      }
+      .masonry-card img {
+        width: 100%;
+        display: block;
+      }
+      .masonry-card .info {
+        padding: 10px 14px;
+        font-size: 14px;
+        color: #333;
+        line-height: 1.5;
+      }
+      #load-more {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 30px;
+        font-size: 16px;
+        border: none;
+        background: #06f;
+        color: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      #load-more:active {
+        background: #0055cc;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="masonry-container"></div>
+    <button id="load-more">加载更多</button>
+
+    <script>
+      // ---------- 辅助：等待图片加载 ----------
+      function waitForImages(element) {
+        const images = element.querySelectorAll("img");
+        const promises = Array.from(images).map((img) => {
+          if (img.complete) {
+            return Promise.resolve(); // 缓存已加载
+          }
+          return new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject; // 失败也继续，防止卡死
+          });
+        });
+        return Promise.all(promises);
+      }
+
+      // ---------- 瀑布流类 ----------
+      class Masonry {
+        constructor(container, options = {}) {
+          this.container = container;
+          this.cardWidth = options.cardWidth || 220; // 卡片宽度
+          this.gap = options.gap || 14; // 卡片间距
+          this.columns = 0;
+          this.columnHeights = [];
+          this.items = []; // 存放已布局的卡片 DOM
+          this.offsetLeft = 0; // 左侧居中偏移
+
+          this.handleResize = this.debounce(this._handleResize.bind(this), 150);
+          window.addEventListener("resize", this.handleResize);
+
+          // 初始化计算列数
+          this.calcColumns();
+        }
+
+        /** 计算列数与居中偏移 */
+        calcColumns() {
+          const containerWidth = this.container.clientWidth;
+
+          console.log("🚀 ~ Masonry ~ calcColumns ~ containerWidth:", containerWidth, this.cardWidth, this.gap)
+
+          this.columns =
+            Math.floor(
+              (containerWidth + this.gap) / (this.cardWidth + this.gap)
+            ) || 1;
+          const totalWidth =
+            this.columns * this.cardWidth + (this.columns - 1) * this.gap;
+          this.offsetLeft = Math.max(0, (containerWidth - totalWidth) / 2);
+          this.columnHeights = new Array(this.columns).fill(0);
+        }
+
+        /** 重新布局所有已有卡片（一般用于 resize） */
+        layout() {
+          if (this.columns === 0) this.calcColumns();
+          this.columnHeights.fill(0);
+
+          this.items.forEach((card) => {
+            const height = card.offsetHeight;
+            const minIdx = this.columnHeights.indexOf(
+              Math.min(...this.columnHeights)
+            );
+            const top = this.columnHeights[minIdx];
+            const left = this.offsetLeft + minIdx * (this.cardWidth + this.gap);
+
+            card.style.left = left + "px";
+            card.style.top = top + "px";
+            card.style.opacity = "1"; // 显示
+
+            this.columnHeights[minIdx] += height + this.gap;
+          });
+
+          console.log("🚀 ~ Masonry ~ layout ~ this.columnHeights:", this.columnHeights)
+
+          // 更新容器总高度
+          this.container.style.height =
+            Math.max(...this.columnHeights, 0) - this.gap + "px";
+        }
+
+        /** 批量添加新卡片（异步，等图片加载） */
+        async addItems(itemsData) {
+          // 第一步：创建所有卡片 DOM（隐藏状态）
+          const newCards = itemsData.map((data) =>
+            this._createCardElement(data)
+          );
+
+          // 第二步：等所有新卡片内的图片加载完成
+          for (const card of newCards) {
+            this.container.appendChild(card); // 加入 DOM 才能获取尺寸
+            try {
+              await waitForImages(card);
+            } catch (e) {
+              /* 某图加载失败，已显示缺省，继续 */
+            }
+          }
+
+          // 第三步：把这些卡片纳入管理并重新布局
+          this.items.push(...newCards);
+          this.layout();
+        }
+
+        /** 单个卡片的 DOM 生成（隐藏） */
+        _createCardElement(data) {
+          const card = document.createElement("div");
+          card.className = "masonry-card";
+          // 随机图片（picsum 提供不同尺寸）
+          const width = 400; // 高清
+          const height = data.height || 200 + Math.floor(Math.random() * 250);
+          card.innerHTML = `
+          <img src="https://picsum.photos/${width}/${height}?random=${Math.random()}" alt="图">
+          <div class="info">${data.text || "一段描述文字"}</div>
+        `;
+          return card;
+        }
+
+        /** resize 处理（防抖） */
+        _handleResize() {
+          this.calcColumns();
+          this.layout();
+        }
+
+        debounce(fn, delay) {
+          let timer;
+          return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), delay);
+          };
+        }
+      }
+
+      // ---------- 初始化 ----------
+      const container = document.getElementById("masonry-container");
+      const masonry = new Masonry(container, { cardWidth: 220, gap: 14 });
+
+      // 初始加载 12 个卡片
+      const initialData = Array.from({ length: 12 }, (_, i) => ({
+        height: 180 + Math.floor(Math.random() * 300),
+        text: `第 ${i + 1} 张卡片，内容高度随机。`
+      }));
+      masonry.addItems(initialData);
+
+      // 点击“加载更多”
+      document.getElementById("load-more").addEventListener("click", () => {
+        const newData = Array.from({ length: 6 }, (_, i) => ({
+          height: 180 + Math.floor(Math.random() * 300),
+          text: `新加载的卡片 ${i + 1}`
+        }));
+        masonry.addItems(newData);
+      });
+    </script>
+  </body>
+</html>

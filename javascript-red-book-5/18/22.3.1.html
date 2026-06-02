@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      let user = {
+        username: "007",
+        firstName: "James",
+        lastName: "Bond",
+        password: "foo"
+      };
+      let user2 = {
+        username: "008",
+        firstName: "xie",
+        lastName: "chen",
+        password: "xxxccc"
+      };
+
+      let version = 1;
+
+      // 打开数据库
+      const openRequest = indexedDB.open("admin", version);
+
+      // 打开数据库失败
+      openRequest.onerror = (event) => {
+        console.log(event.target.error);
+      };
+
+      // 打开数据库成功
+      openRequest.onsuccess = (event) => {
+        const db = event.target.result;
+
+        // 创建一个事务，声明这次事务可以访问 users 这个 object store，并且权限是读写
+        let transaction = db.transaction("users", "readwrite");
+        // 从这个事务里取出 users 这张“表”的操作入口
+        let objectStore = transaction.objectStore("users");
+
+        // 创建索引
+       /*  const index = objectStore.createIndex("username", "username", {
+          unique: true
+        }); */
+
+        /*  let res = objectStore.add(user2);
+        console.log("🚀 ~ res:", res)
+        objectStore.get("008"); */
+
+        // 从"007"的下一条记录开始，到"ace"的前一条记录停止
+        const boundRange = IDBKeyRange.bound("007", "ace", true, true);
+
+        // 打开游标
+        let request = objectStore.openCursor(boundRange);
+        // 打开游标成功
+        request.onsuccess = (event) => {
+          console.log("🚀 ~ event:", event.target.result);
+          const cursor = event.target.result;
+          // 必须进行空值判断
+          if (cursor) {
+            if (cursor.key === "007") {
+              let newValue = { ...cursor.value };
+              newValue.password = "newPassword";
+              const updateRequest = cursor.update(newValue);
+              updateRequest.onsuccess = () => {
+                console.log("更新成功");
+              };
+              updateRequest.onerror = (event) => {
+                console.log(event.target.error);
+              };
+            }
+            cursor.continue();
+          }
+        };
+      };
+
+      // 数据库升级
+      openRequest.onupgradeneeded = (event) => {
+        const db = event.target.result;
+
+        // 如果存在 users 表，先删除（仅测试用）
+        if (db?.objectStoreNames.contains("users")) {
+          db.deleteObjectStore("users");
+        }
+
+        // 创建 users 表
+        db.createObjectStore("users", { keyPath: "username" });
+      };
+    </script>
+  </body>
+</html>

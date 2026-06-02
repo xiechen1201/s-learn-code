@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    // ========= 案例一 =========
+   /*  const worker = new Worker('./worker.js');
+    
+    worker.postMessage("foo");
+    worker.postMessage("bar");
+    worker.postMessage("baz"); */
+
+    // ========= 案例二 =========
+    /* const worker = new Worker('./worker.js');
+    worker.onmessage = (e) => {
+      console.log("🚀 ~ worker.js ~ e:", e)
+    } */
+
+    // ========= 案例三 =========
+    /* const worker = new Worker('./worker.js');
+    setTimeout(() => {
+      worker.postMessage("foo");
+      worker.terminate();
+      worker.postMessage("bar");
+      setTimeout(() => {
+        worker.postMessage("baz");
+      }, 0)
+    }, 1000) */
+
+    // ========= 案例四 =========
+    const workerScript = `
+    self.onmessage = (e) => {
+      console.log("🚀 ~ worker.js ~ e:", e)
+    }
+    `;
+
+    const workerScriptBlob = new Blob([workerScript], { type: 'text/javascript' });
+    const workerScriptURL = URL.createObjectURL(workerScriptBlob);
+    
+    const worker = new Worker(workerScriptURL);
+    worker.postMessage("foo");
+    worker.postMessage("bar");
+    worker.postMessage("baz");
+  </script>
+</body>
+</html>

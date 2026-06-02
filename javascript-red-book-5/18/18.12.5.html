@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      async function* ints() {
+        for (let i = 0; i < 5; i++) {
+          yield await new Promise((resolve) =>
+            setTimeout(() => resolve(i), 1000)
+          );
+        }
+      }
+
+      const integerStream = new ReadableStream({
+        async start(controller){
+          for await (const chunk of ints()) {
+            // 可读流写入数据
+            controller.enqueue(chunk);
+          }
+          // 写入完成
+          controller.close();
+        }
+      });
+
+      /* const doublingStream = new TransformStream({
+        transform(chunk, controller) {
+          // 对数据进行处理，然后再写入可读流
+          controller.enqueue(chunk * 2);
+        }
+      })
+
+      // 进行管道连接，得到一个新的可读流
+      const pipedStream = integerStream.pipeThrough(doublingStream);
+      // 从新可读流中获取读取器
+      const pipedStreamDefaultReader = pipedStream.getReader();
+      (async function () {
+        while (true) {
+          const { done, value } = await pipedStreamDefaultReader.read();
+          if (done) {
+            break;
+          }
+          console.log(value);
+        }
+      })(); */
+
+      const writableStream = new WritableStream({
+        write(chunk) {
+          console.log(chunk);
+        }
+      });
+      const pipedStream = integerStream.pipeTo(writableStream);
+    </script>
+  </body>
+</html>
