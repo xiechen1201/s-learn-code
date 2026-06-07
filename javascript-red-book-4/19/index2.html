@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>富文本</title>
+    <style>
+      .editor {
+        border: 1px solid #333;
+        min-height: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 这个布尔值属性表示列表中的选项是否支持多选。没有声明该值时，一次只能选中一个选项。声明这个属性
+后，大多数浏览器都会显示一个可滚动的列表框，而非一个下拉菜单。 -->
+    <div id="editor" class="editor" contenteditable="true"></div>
+    <button id="btn-bold">文字加粗</button>
+    <script>
+      let oEditor = document.getElementById("editor");
+      let oBtnBold = document.getElementById("btn-bold");
+
+      oBtnBold.onclick = function () {
+        console.log(document.getSelection())
+        /* document.execCommand("bold", false, null); */
+      };
+    </script>
+  </body>
+</html>

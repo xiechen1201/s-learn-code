@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div id="myDiv" style="width: 100px; height: 100px;" align="left" my_special_attribute="hello" onclick="onClickDiv()"></div>
+  <script>
+    function onClickDiv() {
+      console.log("div 被点击了");
+    }
+
+    let oDiv = document.getElementById("myDiv");
+    console.log(oDiv.getAttribute("style"))
+    console.log(oDiv.getAttribute("onclick"))
+
+    console.log(oDiv.style)
+    console.log(oDiv.onclick)
+  </script>
+</body>
+</html>

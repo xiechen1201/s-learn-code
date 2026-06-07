@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>不定高虚拟滚动</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      font-family: sans-serif;
+      background: #f0f0f0;
+    }
+    #app {
+      max-width: 600px;
+      margin: 0 auto;
+      height: 100%;
+      background: #fff;
+    }
+    /* 虚拟滚动容器 */
+    .virtual-scroll-container {
+      height: 100%;
+      overflow-y: auto;
+      position: relative;
+      will-change: transform;
+    }
+    .virtual-scroll-phantom {
+      position: relative;
+      width: 100%;
+      /* 高度由 JS 动态设置（所有项总高度） */
+    }
+    .virtual-scroll-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+    .list-item {
+      padding: 14px 20px;
+      border-bottom: 1px solid #eee;
+      box-sizing: border-box;
+      /* 每个项目高度不固定，由内容撑开 */
+    }
+    .list-item img {
+      max-width: 100%;
+      display: block;
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    // ---------- 工具：二分查找，根据 scrollTop 找 startIndex ----------
+    function binarySearch(positions, value) {
+      let low = 0, high = positions.length - 1;
+      while (low <= high) {
+        const mid = (low + high) >> 1;
+        const midBottom = positions[mid].bottom;
+        if (midBottom < value) {
+          low = mid + 1;
+        } else if (midBottom > value) {
+          if (mid > 0 && positions[mid - 1].bottom <= value) return mid;
+          high = mid - 1;
+        } else {
+          return mid + 1; // 刚好压在边界，属于下一项
+        }
+      }
+      return low;
+    }
+
+    // ---------- 虚拟滚动类 ----------
+    class VirtualScroll {
+      constructor({
+        container,        // 滚动容器
+        items,            // 数据数组
+        estimatedItemHeight = 80,
+        renderItem,       // (item, index) => Element
+        overscan = 3      // 上下额外渲染数
+      }) {
+        this.container = container;
+        this.items = items;
+        this.estimatedItemHeight = estimatedItemHeight;
+        this.renderItem = renderItem;
+        this.overscan = overscan;
+
+        // 位置缓存：{ index, top, bottom, height }
+        this.positions = items.map((_, index) => ({
+          index,
+          top: index * estimatedItemHeight,
+          bottom: (index + 1) * estimatedItemHeight,
+          height: estimatedItemHeight,
+        }));
+
+        // 创建 DOM 结构
+        this.phantom = document.createElement('div');
+        this.phantom.className = 'virtual-scroll-phantom';
+
+        this.content = document.createElement('div');
+        this.content.className = 'virtual-scroll-content';
+        
+        this.phantom.appendChild(this.content);
+        this.container.appendChild(this.phantom);
+
+        // 更新 phantom 总高度
+        this.phantom.style.height = this.positions[this.positions.length - 1]?.bottom + 'px';
+
+        // 缓存已渲染的真实高度（避免重复测量）
+        this.measuredHeights = new Map();
+
+        // 存储当前渲染的节点
+        this.renderedNodes = new Map();
+
+        // 绑定滚动事件
+        this.container.addEventListener('scroll', this.onScroll.bind(this));
+
+        // 使用 ResizeObserver 监听每个 item 的高度变化
+        this.resizeObserver = new ResizeObserver(entries => {
+          for (const entry of entries) {
+            const el = entry.target;
+            const index = Number(el.dataset.index);
+            if (!isNaN(index)) {
+              this.updateItemHeight(index, entry.contentRect.height);
+            }
+          }
+        });
+
+        // 初始渲染
+        this.render();
+      }
+
+      /** 更新某个项目的真实高度，并修正后续位置 */
+      updateItemHeight(index, realHeight) {
+        const pos = this.positions[index];
+        if (pos.height === realHeight) return; // 未改变
+        const diff = realHeight - pos.height;
+        pos.height = realHeight;
+        pos.bottom = pos.top + realHeight;
+
+        // 更新后续所有项的位置
+        for (let i = index + 1; i < this.positions.length; i++) {
+          this.positions[i].top += diff;
+          this.positions[i].bottom += diff;
+        }
+
+        // 更新总高度
+        const totalHeight = this.positions[this.positions.length - 1].bottom;
+        this.phantom.style.height = totalHeight + 'px';
+
+        // 防止滚动位置突变：
+        // 如果当前滚动位置正在变化（比如用户拖滚动条），需要微调 scrollTop
+        // 这里的处理：如果改变高度的项在当前视口上方，会使得后续内容偏移，需同步调整 scrollTop
+        const scrollTop = this.container.scrollTop;
+        const containerTop = this.container.getBoundingClientRect().top;
+        // 获取该项在容器中的位置
+        // 简便方式：如果该项完全在视口上方（pos.bottom < scrollTop），则需要补偿 diff
+        if (pos.bottom <= scrollTop) {
+          this.container.scrollTop = scrollTop + diff;
+        }
+      }
+
+      /** 获取可视区域范围 */
+      getVisibleRange() {
+        const scrollTop = this.container.scrollTop;
+        const containerHeight = this.container.clientHeight;
+        const startValue = scrollTop;
+        const endValue = scrollTop + containerHeight;
+
+        let startIndex = binarySearch(this.positions, startValue);
+        startIndex = Math.max(0, startIndex - this.overscan);
+
+        let endIndex = binarySearch(this.positions, endValue);
+        endIndex = Math.min(this.items.length - 1, endIndex + this.overscan);
+
+        return { startIndex, endIndex };
+      }
+
+      /** 主渲染逻辑 */
+      render() {
+        const { startIndex, endIndex } = this.getVisibleRange();
+        const contentFrag = document.createDocumentFragment();
+
+        console.log("🚀 ~ VirtualScroll ~ render ~ startIndex, endIndex:", startIndex, endIndex)
+        console.log("🚀 ~ VirtualScroll ~ render ~ this.renderedNodes:", this.renderedNodes)
+
+        // 移除不再可见的节点，并取消 ResizeObserver 观察
+        for (const [index, node] of this.renderedNodes.entries()) {
+          if (index < startIndex || index > endIndex) {
+            this.resizeObserver.unobserve(node);
+            node.remove();
+            this.renderedNodes.delete(index);
+          }
+        }
+
+        debugger
+
+        // 记录已渲染的索引，用于快速跳过
+        const newRendered = new Map();
+
+        for (let i = startIndex; i <= endIndex; i++) {
+          let node = this.renderedNodes.get(i);
+          if (!node) {
+            // 创建新节点
+            const item = this.items[i];
+            node = this.renderItem(item, i);
+            node.dataset.index = i; // 绑定索引
+            node.classList.add('list-item');
+            // 观察高度变化
+            this.resizeObserver.observe(node);
+          } else {
+            // 已存在节点，可能需更新内容（如果数据变化）
+            // 简单示例不更新内容，实际项目可对比更新
+          }
+          contentFrag.appendChild(node);
+          newRendered.set(i, node);
+        }
+
+        // 清空 content 容器并填充新片段（高效）
+        this.content.innerHTML = '';
+        this.content.appendChild(contentFrag);
+        this.renderedNodes = newRendered;
+
+        // 设置偏移量
+        const offsetY = this.positions[startIndex]?.top || 0;
+        this.content.style.transform = `translateY(${offsetY}px)`;
+      }
+
+      onScroll() {
+        // 防抖或节流可自行添加，此处直接调用
+        requestAnimationFrame(() => this.render());
+      }
+    }
+
+    // ---------- 示例：使用虚拟滚动 ----------
+    const container = document.getElementById('app');
+    // 创建滚动容器
+    const scrollContainer = document.createElement('div');
+    scrollContainer.className = 'virtual-scroll-container';
+    container.appendChild(scrollContainer);
+
+    // 模拟 1000 条数据，每条内容随机，产生不同高度
+    const mockItems = Array.from({ length: 1000 }, (_, i) => ({
+      id: i,
+      text: `第 ${i + 1} 项：` + '这是一段描述文字。'.repeat((i % 5) + 1),
+      // 随机决定是否带图，以造成高度差异
+      withImage: i % 7 === 0,
+      imgHeight: 100 + Math.floor(Math.random() * 200),
+    }));
+
+    // 渲染函数
+    function renderItem(item, index) {
+      const div = document.createElement('div');
+      let innerHTML = `<strong>#${index}</strong> <span>${item.text}</span>`;
+      if (item.withImage) {
+        // 随机图片（picsum），不同尺寸
+        innerHTML += `<img src="https://picsum.photos/400/${item.imgHeight}?random=${index}" alt="img" />`;
+      }
+      div.innerHTML = innerHTML;
+      return div;
+    }
+
+    // 实例化
+    new VirtualScroll({
+      container: scrollContainer,
+      items: mockItems,
+      estimatedItemHeight: 80,
+      renderItem,
+      overscan: 3
+    });
+  </script>
+</body>
+</html>

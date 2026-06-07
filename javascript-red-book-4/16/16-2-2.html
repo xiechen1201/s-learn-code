@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>document.styleSheets API Demo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.min.css" />
+    <style>
+      :root {
+        --primary: #0b57d0;
+        --bg: #f5f7fb;
+        --card: #ffffff;
+        --text: #1f2937;
+        --border: #dbe2ea;
+      }
+
+      body {
+        margin: 0;
+        padding: 24px;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: var(--bg);
+        color: var(--text);
+      }
+
+      .card {
+        max-width: 900px;
+        margin: 0 auto;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 20px;
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 24px;
+      }
+
+      p {
+        margin: 8px 0;
+        line-height: 1.6;
+      }
+
+      .actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 0;
+        border-radius: 8px;
+        padding: 10px 14px;
+        background: var(--primary);
+        color: #fff;
+        cursor: pointer;
+      }
+
+      #output {
+        margin-top: 16px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background: #0f172a;
+        color: #e5e7eb;
+        white-space: pre-wrap;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        min-height: 180px;
+      }
+
+      .sample-box {
+        margin-top: 12px;
+        border: 2px dashed #93c5fd;
+        padding: 12px;
+        border-radius: 8px;
+        background: #eff6ff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>document.styleSheets API 测试页</h1>
+      <p>
+        点击按钮后，会遍历
+        <code>document.styleSheets</code> 并输出每个样式表信息。
+      </p>
+      <p>你可以在控制台和下方输出区域查看结果。</p>
+
+      <div class="sample-box">这是一个示例元素，用于验证样式是否生效。</div>
+
+      <div class="actions">
+        <button id="inspectBtn">读取 styleSheets</button>
+        <button id="toggleFirstBtn">切换第一个样式表 disabled</button>
+      </div>
+
+      <pre id="output">等待执行...</pre>
+    </div>
+
+    <script>
+      console.log(document.styleSheets);
+
+      /* const output = document.getElementById("output");
+    const inspectBtn = document.getElementById("inspectBtn");
+    const toggleFirstBtn = document.getElementById("toggleFirstBtn");
+
+    function inspectStyleSheets() {
+      const sheets = document.styleSheets;
+      const lines = [];
+      lines.push(`styleSheets.length = ${sheets.length}`);
+
+      for (let i = 0; i < sheets.length; i += 1) {
+        const sheet = sheets[i];
+        lines.push(`\n[${i}] href: ${sheet.href || "(inline <style>)"}`);
+        lines.push(`ownerNode: <${sheet.ownerNode ? sheet.ownerNode.tagName.toLowerCase() : "unknown"}>`);
+        lines.push(`disabled: ${sheet.disabled}`);
+        lines.push(`media: ${sheet.media ? sheet.media.mediaText : ""}`);
+
+        try {
+          const rules = sheet.cssRules || [];
+          lines.push(`cssRules.length: ${rules.length}`);
+          if (rules[0]) {
+            lines.push(`firstRule: ${rules[0].cssText}`);
+          }
+        } catch (error) {
+          lines.push(`cssRules: 无法读取（可能是跨域限制） -> ${error.name}: ${error.message}`);
+        }
+      }
+
+      const result = lines.join("\n");
+      output.textContent = result;
+      console.log(result);
+    }
+
+    inspectBtn.addEventListener("click", inspectStyleSheets);
+
+    toggleFirstBtn.addEventListener("click", () => {
+      if (!document.styleSheets.length) return;
+      document.styleSheets[0].disabled = !document.styleSheets[0].disabled;
+      inspectStyleSheets();
+    });
+
+    inspectStyleSheets(); */
+    </script>
+  </body>
+</html>

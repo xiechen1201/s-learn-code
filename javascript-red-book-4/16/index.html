@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="random-content">
+      <h1>随机生成的内容</h1>
+      <p>这是一段随机生成的文本内容，包含了各种不同的元素和信息。</p>
+      <ul>
+        <li>随机事实：地球上约有7,100种已知的语言</li>
+        <li>随机数字：42, 17, 89, 123, 456</li>
+        <li>
+          随机颜色：<span style="color: #ff5733">红橙色</span>,
+          <span style="color: #33ff57">绿色</span>,
+          <span style="color: #3357ff">蓝色</span>
+        </li>
+      </ul>
+      <p>
+        一段随机的名言：<em
+          >"成功不是偶然的，而是来自于正确的决定、努力工作和坚持不懈。"</em
+        >
+      </p>
+      <div
+        style="
+          background-color: #f0f0f0;
+          padding: 10px;
+          border-radius: 5px;
+          margin-top: 20px;
+        ">
+        <h3>随机诗句</h3>
+        <p>
+          云淡风轻春正好，<br />花开花落又一年。<br />山高水长人生路，<br />且行且珍惜当前。
+        </p>
+      </div>
+    </div>
+    <script>
+      let oDiv = document.querySelector(".random-content");
+      let iterator = document.createNodeIterator(oDiv, NodeFilter.SHOW_ALL);
+      let node = iterator.nextNode();
+      while (node !== null) {
+        console.log(node);
+        node = iterator.nextNode();
+      }
+    </script>
+  </body>
+</html>

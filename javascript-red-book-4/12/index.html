@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="btn">移动窗口</button>
+    <a
+      target="_blank"
+      href="https://qm.qq.com/cgi-bin/qm/qr?k=eFczziPvzHq21tvu3EDnq1Ln10auo9zY&jump_from=webapi&authKey=g9Ux8fnluXHbDoyOWYtuDf4mT5OOeFumBSX0Z4wPZtJGHc+3jA3hLbwaQYhvzdtZ">
+      <img
+        border="0"
+        src="https://pub.idqqimg.com/wpa/images/group.png"
+        alt="测试群聊"
+        title="测试拉起QQ群聊" />
+    </a>
+    <script>
+      let oBtn = document.getElementById("btn");
+      oBtn.onclick = function () {
+        window.moveTo(200, 300);
+      };
+    </script>
+  </body>
+</html>

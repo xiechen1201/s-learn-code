@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div
+      style="border: 1px solid red; width: 100px; height: 100px"
+      draggable="true"
+      id="draggableBox"></div>
+
+    <a href="http://www.baidu.com">这是一个测试内容</a>
+
+    <div
+      style="border: 1px solid #333; width: 500px; height: 500px"
+      id="targetBox"></div>
+    <script>
+      /* const draggableBox = document.getElementById("draggableBox");
+      function handleEvent(e) {
+        e.preventDefault();
+        console.log("🚀 ~ handleEvent ~ e:", e.type)
+        const files = e.dataTransfer.files;
+        console.log("🚀 ~ handleEvent ~ files:", files)
+      }
+      draggableBox.addEventListener("dragenter", handleEvent);
+      draggableBox.addEventListener("dragover", handleEvent);
+      draggableBox.addEventListener("drop", handleEvent); */
+
+      const draggableBox = document.getElementById("draggableBox");
+      function handleEvent(e) {
+        // e.preventDefault();
+        if (e.type === "dragstart") {
+          e.dataTransfer.dropEffect = "move";
+          e.dataTransfer.setData("text", "这是一段测试内容");
+        }
+      }
+      draggableBox.addEventListener("dragstart", handleEvent);
+      draggableBox.addEventListener("drag", handleEvent);
+      draggableBox.addEventListener("dragend", handleEvent);
+
+      const targetBox = document.getElementById("targetBox");
+      function targetEvent(e) {
+        e.preventDefault();
+        if (e.type === "drop") {
+          const text = e.dataTransfer.getData("text");
+          e.dataTransfer.effectAllowed = "move";
+          console.log("🚀 ~ targetEvent ~ text:", text);
+        }
+      }
+      function targetEnterOverEvent(e) {
+        e.preventDefault();
+      }
+      targetBox.addEventListener("dragenter", targetEnterOverEvent);
+      targetBox.addEventListener("dragover", targetEnterOverEvent);
+      targetBox.addEventListener("dragleave", targetEvent);
+      targetBox.addEventListener("drop", targetEvent);
+    </script>
+  </body>
+</html>

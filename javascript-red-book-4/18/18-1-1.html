@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="status" style="position: absolute; top: 50px; left: 0; width: 100px; height: 20px; background-color: red;"></div>
+    <script>
+      function updateProgress(time) {
+        console.log("🚀 ~ updateProgress ~ time:", time)
+        
+        var div = document.getElementById("status");
+        div.style.left = parseInt(div.style.left, 10) + 5 + "%";
+        // 持续调用
+        if (div.style.left != "100%") {
+          requestAnimationFrame(updateProgress);
+        }
+      }
+      requestAnimationFrame(updateProgress);
+    </script>
+  </body>
+</html>

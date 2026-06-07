@@ -1,3 +1,4 @@
+import { Profiler } from "react";
 import BaseReducer from "./components/BaseReducer";
 import BaseSyncExternal from "./components/BaseSyncExternal";
 import BasePending from "./components/BasePending";
@@ -6,8 +7,19 @@ import BaseStore from "./components/BaseStore"
 import BaseState from "./components/BaseState";
 
 function App() {
+  const onRender = (
+    id,
+    phase,
+    actualDuration,
+    baseDuration,
+    startTime,
+    commitTime
+  ) => {
+    console.log(id, phase, actualDuration, baseDuration, startTime, commitTime);
+  };
+
   return (
-    <div>
+    <Profiler id='test-profiler' onRender={onRender}>
       <BaseReducer />
       <hr />
 
@@ -24,7 +36,7 @@ function App() {
       <br />
 
       <BaseState />
-    </div>
+    </Profiler>
   );
 }
 

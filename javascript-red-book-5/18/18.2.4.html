@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="write">写入剪贴板</button>
+    <button id="read">读取剪贴板</button>
+    <script>
+      document.querySelector("#write").addEventListener("click", async () => {
+        const blob = await new Promise((resolve) =>
+          document.createElement("canvas").toBlob(resolve, "image/png")
+        );
+        const clipboardItem = new ClipboardItem({
+          "image/png": blob
+        });
+        navigator.clipboard.write([clipboardItem]);
+      });
+    </script>
+  </body>
+</html>

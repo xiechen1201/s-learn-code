@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>定高虚拟滚动</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        font-family: sans-serif;
+        background: #f5f5f5;
+      }
+      #app {
+        max-width: 600px;
+        margin: 0 auto;
+        height: 100%;
+        background: #fff;
+      }
+      .virtual-scroll-container {
+        height: 100%;
+        overflow-y: auto;
+        position: relative;
+      }
+      .phantom {
+        position: relative;
+        width: 100%;
+      }
+      .content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+      }
+      .list-item {
+        padding: 0 20px;
+        border-bottom: 1px solid #eee;
+        box-sizing: border-box;
+        /* 固定高度，与 JS 保持一致 */
+        height: 60px;
+        line-height: 60px;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+      class FixedHeightVirtualScroll {
+        constructor({
+          container, // 滚动容器
+          items, // 数据数组
+          itemHeight = 60, // 每项的固定高度 (px)
+          renderItem, // (item, index) => Element
+          overscan = 5 // 上下额外渲染数
+        }) {
+          this.container = container;
+          this.items = items;
+          this.itemHeight = itemHeight;
+          this.renderItem = renderItem;
+          this.overscan = overscan;
+
+          this.totalHeight = items.length * itemHeight;
+
+          // 创建 DOM 骨架
+          this.phantom = document.createElement("div");
+          this.phantom.className = "phantom";
+          this.phantom.style.height = this.totalHeight + "px";
+
+          this.content = document.createElement("div");
+          this.content.className = "content";
+          this.phantom.appendChild(this.content);
+          this.container.appendChild(this.phantom);
+
+          // 存储当前渲染的节点（按索引）
+          this.renderedNodes = new Map();
+
+          // 绑定滚动
+          this.container.addEventListener("scroll", () => {
+            requestAnimationFrame(() => this.render());
+          });
+
+          // 首次渲染
+          this.render();
+        }
+
+        /** 计算可视区域范围 */
+        getVisibleRange() {
+          const scrollTop = this.container.scrollTop;
+          const containerHeight = this.container.clientHeight;
+
+          // 定高可以直接通过除法算出索引
+          const startIndex = Math.floor(scrollTop / this.itemHeight);
+          const visibleCount = Math.ceil(containerHeight / this.itemHeight);
+          const endIndex = Math.min(
+            startIndex + visibleCount - 1,
+            this.items.length - 1
+          );
+
+          // 加上 overscan
+          return {
+            startIndex: Math.max(0, startIndex - this.overscan),
+            endIndex: Math.min(this.items.length - 1, endIndex + this.overscan)
+          };
+        }
+
+        /** 渲染可见项 */
+        render() {
+          const { startIndex, endIndex } = this.getVisibleRange();
+
+          // 移除不再可见的节点
+          for (const [index, node] of this.renderedNodes.entries()) {
+            if (index < startIndex || index > endIndex) {
+              node.remove();
+              this.renderedNodes.delete(index);
+            }
+          }
+
+          // 确保可见项全部存在
+          const fragment = document.createDocumentFragment();
+          const newNodes = new Map();
+
+          for (let i = startIndex; i <= endIndex; i++) {
+            let node = this.renderedNodes.get(i);
+            if (!node) {
+              const item = this.items[i];
+              node = this.renderItem(item, i);
+              node.classList.add("list-item");
+              // 定高无需 ResizeObserver
+            }
+            fragment.appendChild(node);
+            newNodes.set(i, node);
+          }
+
+          // 清空内容并重新插入（保持顺序）
+          this.content.innerHTML = "";
+          this.content.appendChild(fragment);
+          this.renderedNodes = newNodes;
+
+          // 设置偏移，让可见项出现在正确位置
+          const offsetY = startIndex * this.itemHeight;
+          this.content.style.transform = `translateY(${offsetY}px)`;
+        }
+      }
+
+      // ---------- 使用示例 ----------
+      const app = document.getElementById("app");
+      const scrollContainer = document.createElement("div");
+      scrollContainer.className = "virtual-scroll-container";
+      app.appendChild(scrollContainer);
+
+      // 模拟 10000 条数据
+      const mockItems = Array.from({ length: 10000 }, (_, i) => ({
+        id: i,
+        text: `第 ${i + 1} 项：这是一条定高虚拟列表项`
+      }));
+
+      // 渲染函数（返回一个 div，高度由 CSS 固定）
+      function renderItem(item, index) {
+        const div = document.createElement("div");
+        div.innerHTML = `<strong>#${index}</strong> ${item.text}`;
+        return div;
+      }
+
+      new FixedHeightVirtualScroll({
+        container: scrollContainer,
+        items: mockItems,
+        itemHeight: 60,
+        renderItem,
+        overscan: 5
+      });
+    </script>
+  </body>
+</html>

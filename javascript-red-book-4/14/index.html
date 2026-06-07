@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <ul>
+      <li>1</li>
+      <li>2</li>
+      <li>3</li>
+      <li>4</li>
+      <li>5</li>
+    </ul>
+    <button id="button">更改第一个的属性</button>
+    <script>
+      const oUl = document.querySelector("ul");
+      const fLi = oUl.firstElementChild;
+      const oButton = document.querySelector("#button");
+
+      oButton.addEventListener("click", () => {
+        fLi.setAttribute("data-name1", "xiechen1");
+        fLi.setAttribute("data-name2", "xiechen2");
+        fLi.setAttribute("data-name3", "xiechen3");
+        fLi.setAttribute("data-name4", "xiechen4");
+      });
+
+      let observer = new MutationObserver((record, observer) => {
+        console.log("dom 被更改了。", record, observer);
+      });
+
+      observer.observe(fLi, {
+        attributes: true
+      });
+    </script>
+  </body>
+</html>

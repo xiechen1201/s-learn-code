@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      async function* ints() {
+        for (let i = 0; i < 5; i++) {
+          yield await new Promise((resolve) =>
+            setTimeout(() => resolve(i), 1000)
+          );
+        }
+      }
+
+      const { writable, readable } = new TransformStream({
+        transform(chunk, controller) {
+          controller.enqueue(chunk * 2);
+        }
+      });
+
+      const readableStreamDefaultReader = readable.getReader();
+      const writableStreamDefaultWriter = writable.getWriter();
+
+      (async function (params) {
+        while (true) {
+          const { done, value } = await readableStreamDefaultReader.read();
+          if (done) {
+            break;
+          }
+          console.log(value);
+        }
+      })();
+
+      (async function (params) {
+        for await (const chunk of ints()) {
+          await writableStreamDefaultWriter.ready;
+          writableStreamDefaultWriter.write(chunk);
+        }
+        writableStreamDefaultWriter.close();
+      })();
+    </script>
+  </body>
+</html>

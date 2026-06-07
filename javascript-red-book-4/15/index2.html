@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /* let oDiv = document.createElement("div");
+    oDiv.setUserData("name", "xiechen", function(){
+      console.log(arguments)
+    });
+    oDiv.cloneNode(true);
+    document.body.appendChild(oDiv); */
+      let div = document.createElement("div");
+      div.setUserData(
+        "name",
+        "Nicholas",
+        function (operation, key, value, src, dest) {
+          console.log(operation, key, value, src, dest);
+        }
+      );
+      let newDiv = div.cloneNode(true);
+      console.log(newDiv.getUserData("name"));
+    </script>
+  </body>
+</html>
