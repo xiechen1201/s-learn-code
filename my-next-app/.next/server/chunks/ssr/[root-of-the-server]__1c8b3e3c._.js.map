@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 27, "column": 0}, "map": {"version":3,"sources":["file:///Users/xiechen/Documents/code-personal/s-learn-code/my-next-app/src/app/blog/%5Bslug%5D/page.tsx"],"sourcesContent":["import React from \"react\";\n\nexport default async function Page({\n    params,\n    searchParams\n}: {\n    params: Promise<{ slug: string }>;\n    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;\n}) {\n    const { slug } = await params;\n    const { keyword } = await searchParams;\n    \n    return (\n        <div>\n            <h1>{slug}</h1>\n            <h1>{keyword}</h1>\n            <h1>博客页面</h1>\n        </div>\n    );\n}\n"],"names":[],"mappings":";;;;;;AAEe,eAAe,KAAK,EAC/B,MAAM,EACN,YAAY,EAIf;IACG,MAAM,EAAE,IAAI,EAAE,GAAG,MAAM;IACvB,MAAM,EAAE,OAAO,EAAE,GAAG,MAAM;IAE1B,qBACI,8OAAC;;0BACG,8OAAC;0BAAI;;;;;;0BACL,8OAAC;0BAAI;;;;;;0BACL,8OAAC;0BAAG;;;;;;;;;;;;AAGhB","debugId":null}}]
+}

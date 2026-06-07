@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 4, "column": 0}, "map": {"version":3,"sources":["file:///Users/xiechen/Documents/code-personal/s-learn-code/my-next-app/src/app/blog/layout.tsx"],"sourcesContent":["export default function BlogLayout({\n    children\n}: {\n    children: React.ReactNode;\n}) {\n    return <section>{children}</section>;\n}\n"],"names":[],"mappings":";;;;;;AAAe,SAAS,WAAW,EAC/B,QAAQ,EAGX;IACG,qBAAO,8OAAC;kBAAS;;;;;;AACrB","debugId":null}}]
+}

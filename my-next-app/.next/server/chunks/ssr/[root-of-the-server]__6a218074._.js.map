@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 28, "column": 0}, "map": {"version":3,"sources":["file:///Users/xiechen/Documents/code-personal/s-learn-code/my-next-app/src/app/blog/%5Bslug%5D/loading.tsx"],"sourcesContent":["'use client'\n \nimport { useLinkStatus } from 'next/link'\n \nexport default function LoadingIndicator() {\n  const { pending } = useLinkStatus()\n  return pending ? (\n    <div role=\"status\" aria-label=\"Loading\" className=\"spinner\" />\n  ) : null\n}"],"names":[],"mappings":";;;;;AAEA;AAFA;;;AAIe,SAAS;IACtB,MAAM,EAAE,OAAO,EAAE,GAAG,IAAA,6KAAa;IACjC,OAAO,wBACL,8OAAC;QAAI,MAAK;QAAS,cAAW;QAAU,WAAU;;;;;eAChD;AACN","debugId":null}}]
+}

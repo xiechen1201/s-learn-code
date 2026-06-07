@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 3, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"","debugId":null}},
+    {"offset": {"line": 19, "column": 0}, "map": {"version":3,"sources":["file:///Users/xiechen/Documents/code-personal/s-learn-code/my-next-app/src/app/page.tsx"],"sourcesContent":["import React from \"react\";\n\nfunction Page() {\n    return <div>Hello Next.js!</div>;\n}\n\nexport default Page;\n"],"names":[],"mappings":";;;;;;AAEA,SAAS;IACL,qBAAO,8OAAC;kBAAI;;;;;;AAChB;uCAEe","debugId":null}}]
+}
