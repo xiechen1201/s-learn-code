@@ -42,6 +42,8 @@ jspm_packages
 
 # Optional npm cache directory
 .npm
+.next/
+.pnpm-store/
 
 # Optional eslint cache
 .eslintcache
