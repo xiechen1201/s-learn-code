@@ -1,0 +1,12 @@
+admin-web@1.0.0:
+  dir: apps/admin-web
+  intents:
+    - small-bees-exist
+mobile-web@1.0.0:
+  dir: apps/mobile-web
+  intents:
+    - small-bees-exist
+shared-utils@1.0.0:
+  dir: packages/shared-utils
+  intents:
+    - small-bees-exist
